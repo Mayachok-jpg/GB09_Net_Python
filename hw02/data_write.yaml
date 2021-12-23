@@ -1,0 +1,7 @@
+action:
+- msg_1
+- msg_2
+- msg_3
+three:
+  12: €
+to: 3
