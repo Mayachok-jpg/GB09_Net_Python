@@ -2,38 +2,39 @@ import json
 import unittest
 import time
 
-from client import enc_message, dec_message
+from client import form_message_to_server
 
 
 class ClientTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.test_message = {
-                "action": 'presence',
-                "time": time.ctime(time.time()),
-                "type": "status",
-                "user": {
-                        "account_name": "C0deMaver1ck",
-                        "status": "Yep, I am here!"
-                }
+        self.correct_message = {
+            "action": 'presence',
+            "time": time.ctime(time.time()),
+            "type": "status",
+            "user": {
+                "account_name": "some_user_name",
+                "status": "Yep, I am here!"
+            }
         }
 
-        self.answer = {
-        "response": 200,
-        "alert":"Необязательное сообщение/уведомление",
-        "time": time.ctime(time.time()),
-        }
+    def _get_message_to_server(self, action='presence') -> dict:
+        """
+        формируем сообщение для сервера.
+        :param action: передаём в сообщение метод
+        :return: словарь, полученный из JSON-объекта
+        """
+        message_to_server = form_message_to_server(action)
+        return json.loads(message_to_server)
 
     def test_message_type(self):
-        result = enc_message('presence')
-        print(type(json.dumps(self.test_message)))
-        self.assertEqual(type(result), type(json.dumps(self.test_message)))
+        self.assertEqual(type(self._get_message_to_server()), type(self.correct_message))
 
-    def test_answer_type(self):
-        result = dec_message(json.dumps(self.answer))
-        # print(type(json.loads(self.answer)))
-        self.assertEqual(type(result), type((self.answer)))
+    def test_forming_message_to_server(self):
+        self.assertEqual(self._get_message_to_server()['action'], self.correct_message['action'])
+        self.assertAlmostEqual(self._get_message_to_server()['time'], self.correct_message['time'], 3)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
+
