@@ -1,9 +1,12 @@
 # Программа клиента для отправки приветствия серверу и получения ответа
 import argparse
+import logging
 import socket
 import json
 import time
+from log import client_log_config
 
+client_logger = logging.getLogger('clientLogger')
 
 def argvparse():
     parser = argparse.ArgumentParser()
@@ -15,20 +18,27 @@ def argvparse():
 
 def create_client_socket(address, port=7777):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Создать сокет TCP
-    client_socket.connect((address, port))  # Соединиться с сервером
 
-    presence_message_2_server = form_message_to_server('presence')
-    client_socket.send(bytes(presence_message_2_server, encoding='utf-8'))
+    try:
+        client_socket.connect((address, port))  # Соединиться с сервером
 
-    message_from_server = client_socket.recv(640)
-    check_server_message(message_from_server)
+        client_logger.info('соединение установлено')
 
-    client_socket.close()
+        presence_message_2_server = form_message_to_server('presence')
+        client_socket.send(bytes(presence_message_2_server, encoding='utf-8'))
+
+        message_from_server = client_socket.recv(640)
+        check_server_message(message_from_server)
+
+        client_socket.close()
+    except ConnectionError:
+        client_logger.critical('сервер не отвечает')
 
 
 def check_server_message(message):
     server_message = json.loads(message)
-    print(f'Received message from server: {server_message}')
+    # print(f'Received message from server: {server_message}')
+    client_logger.info(f'получен ответ: {server_message}')
 
 
 def form_message_to_server(message_type: str):
@@ -45,6 +55,7 @@ def form_message_to_server(message_type: str):
 
 
 if __name__ == "__main__":
+    client_logger.debug('клиент стартовал')
     args = argvparse()
     create_client_socket(args.address, args.port)
 
