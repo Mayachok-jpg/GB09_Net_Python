@@ -5,9 +5,12 @@ import time
 import json
 import argparse
 from log import server_log_config
+from decorators import log
 
 server_logger = logging.getLogger('serverLogger')
 
+
+@log
 def argvparse():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--address', default='')
@@ -16,6 +19,7 @@ def argvparse():
     return parser.parse_args()
 
 
+@log
 def create_server_socket(address='', port=7777):
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)    # Создает сокет TCP
@@ -41,6 +45,7 @@ def create_server_socket(address='', port=7777):
         client.close()
 
 
+@log
 def check_client_message(message: json, address: str) -> tuple:
 
     client_message = json.loads(message)
@@ -50,6 +55,7 @@ def check_client_message(message: json, address: str) -> tuple:
     return client_message['action'], client_message['user']
 
 
+@log
 def form_response_to_client(message_from_client):
     response = ''
 

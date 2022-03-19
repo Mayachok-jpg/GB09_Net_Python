@@ -5,9 +5,12 @@ import socket
 import json
 import time
 from log import client_log_config
+from decorators import Log
 
 client_logger = logging.getLogger('clientLogger')
 
+
+@Log()
 def argvparse():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--address', default='localhost')
@@ -16,6 +19,7 @@ def argvparse():
     return parser.parse_args()
 
 
+@Log()
 def create_client_socket(address, port=7777):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Создать сокет TCP
 
@@ -35,12 +39,14 @@ def create_client_socket(address, port=7777):
         client_logger.critical('сервер не отвечает')
 
 
+@Log()
 def check_server_message(message):
     server_message = json.loads(message)
     # print(f'Received message from server: {server_message}')
     client_logger.info(f'получен ответ: {server_message}')
 
 
+@Log()
 def form_message_to_server(message_type: str):
     message = {
         "action": message_type,

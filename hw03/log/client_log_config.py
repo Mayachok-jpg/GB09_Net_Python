@@ -1,5 +1,5 @@
 import logging
-from logging import handlers
+
 
 log_path = 'test_log.log' if __name__ == "__main__" else 'log/client.log'
 
