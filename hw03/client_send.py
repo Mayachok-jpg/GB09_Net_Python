@@ -29,7 +29,6 @@ def create_client_socket(address, port=7777):
 
         client_logger.info('соединение установлено')
 
-
         presence_message_to_server = form_message_to_server('presence', client_socket)
         client_socket.send(bytes(presence_message_to_server, encoding='utf-8'))
 
@@ -46,12 +45,6 @@ def create_client_socket(address, port=7777):
             try:
                 message_to_server = form_message_to_server('user_message', client_socket)
                 client_socket.send(bytes(message_to_server, encoding='utf-8'))
-            except:
-                client_logger.error(f'Соединение с сервером {address} было потеряно.')
-                sys.exit(1)
-            print('прием')
-            try:
-                check_server_message(message_from_server)
             except:
                 client_logger.error(f'Соединение с сервером {address} было потеряно.')
                 sys.exit(1)
@@ -73,7 +66,8 @@ def form_message_to_server(message_type: str, client_socket):
             "user": {
                 "account_name": "I_am_Your_CLIENT",
                 "status": "Yep, I am here!"
-            }
+            },
+            "text": ""
         }
     elif message_type == 'user_message':
         user_text = input('Введите сообщение для отправки или \'q\' для завершения работы: ')

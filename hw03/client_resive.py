@@ -42,14 +42,6 @@ def create_client_socket(address, port=7777):
         client_logger.critical('сервер не отвечает')
     else:
         while True:
-            print('отправка сообщений')
-            try:
-                message_to_server = form_message_to_server('user_message', client_socket)
-                client_socket.send(bytes(message_to_server, encoding='utf-8'))
-            except:
-                client_logger.error(f'Соединение с сервером {address} было потеряно.')
-                sys.exit(1)
-            print('прием')
             try:
                 check_server_message(message_from_server)
             except:
@@ -59,8 +51,10 @@ def create_client_socket(address, port=7777):
 @Log()
 def check_server_message(message):
     server_message = json.loads(message)
-    # print(f'Received message from server: {server_message}')
-    client_logger.info(f'получен ответ: {server_message}')
+    print(f'Received message from server: {server_message}')
+    if server_message['response'] == '200':
+        client_logger.info(f'получен ответ: {server_message}')
+        print(f'получен ответ: {server_message}')
 
 
 @Log()
