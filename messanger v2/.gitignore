@@ -1,0 +1,4 @@
+some_test_script.py
+*.log
+/log/*.log
+/log/server.log.*
